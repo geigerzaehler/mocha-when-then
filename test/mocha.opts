@@ -1,0 +1,3 @@
+--reporter spec
+--ui dist/mocha-steps
+--compilers coffee:coffee-script/register
