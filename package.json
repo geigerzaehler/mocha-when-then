@@ -4,7 +4,8 @@
   "description": "Given, When, Then interface for mocha",
   "main": "dist/mocha-steps",
   "scripts": {
-    "test": "node_modules/.bin/mocha test"
+    "test": "node_modules/.bin/mocha test",
+    "prepublish": "npm test"
   },
   "repository": {
     "type": "git",
