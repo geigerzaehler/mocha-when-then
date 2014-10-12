@@ -12,10 +12,10 @@ describe 'given when then', ->
   Then  check
 ```
 
-To run it, install the the package with `npm install --save-dev
-mocha-steps` and run
+Use the package with
 
-    mocha --ui mocha-steps
+    npm install --save-dev mocha-when-then
+    mocha --ui mocha-when-then
 
 The above example is roughly equivalent to
 

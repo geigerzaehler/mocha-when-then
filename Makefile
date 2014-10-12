@@ -1,5 +1,5 @@
 .PHONY: dist
-dist: dist/mocha-steps.js
+dist: dist/mocha-when-then.js
 
 dist/%.js: src/%.coffee
 	coffee --compile --print $< > $@

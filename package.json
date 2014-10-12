@@ -1,15 +1,15 @@
 {
-  "name": "moch-steps",
+  "name": "mocha-when-then",
   "version": "0.2.1",
   "description": "Given, When, Then interface for mocha",
-  "main": "dist/mocha-steps",
+  "main": "dist/mocha-when-then.js",
   "scripts": {
     "test": "node_modules/.bin/mocha test",
     "prepublish": "npm test"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/geigerzaehler/mocha-steps.git"
+    "url": "https://github.com/geigerzaehler/mocha-when-then.git"
   },
   "keywords": [
     "mocha",
@@ -22,9 +22,9 @@
   "author": "Thomas Scholtes",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/geigerzaehler/mocha-steps/issues"
+    "url": "https://github.com/geigerzaehler/mocha-when-then/issues"
   },
-  "homepage": "https://github.com/geigerzaehler/mocha-steps",
+  "homepage": "https://github.com/geigerzaehler/mocha-when-then",
   "dependencies": {
     "promise": "^6.0.0"
   },
