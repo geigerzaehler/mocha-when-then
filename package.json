@@ -1,6 +1,6 @@
 {
   "name": "moch-steps",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Given, When, Then interface for mocha",
   "main": "dist/mocha-steps",
   "scripts": {
