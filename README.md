@@ -9,13 +9,9 @@ describe 'given when then', ->
   
   Given setup
   When  doSomething
+  And   doAnotherThing
   Then  check
 ```
-
-Use the package with
-
-    npm install --save-dev mocha-when-then
-    mocha --ui mocha-when-then
 
 The above example is roughly equivalent to
 
@@ -26,15 +22,19 @@ describe 'bdd', ->
 
   it 'then', ->
     doSomething()
+    doAnotherThing()
     if check() == false
       throw new Error()
 ```
 
-In addition to executing a step, `Then` also serves as a very **simple
-assertion** replacement. It will throw an error if the return value of
-the given function is `false`. To not prevent you from using you on
-expectations it will not throw on other falsey values like `null` or
-`undefined`.
+Use the package with
+
+```
+npm install --save-dev mocha-when-then
+mocha --ui mocha-when-then
+```
+
+### Assigning variables
 
 By passing a string to the DSL methods you can **assign variables**, or for
 `Then`, pass variables to step.
@@ -51,6 +51,23 @@ As you can see, the labels will be stripped of any leading 'a'. The
 same holds for 'an' and 'the'.
 
 You can also pass constant values to the steps instead of functions.
+
+
+### `Then` assertions
+
+In addition to executing a step, `Then` also serves as a **simple
+assertion** replacement. It will throw an error if the return value of
+the given function is `false`. To not prevent you from using you on
+expectations it will not throw on other falsey values like `null` or
+`undefined`.
+
+```coffeescript
+Given 'number', 5
+Then 'number', (it)-> it == 5
+
+# This test fails.
+Then 'number', (it)-> it == 4
+```
 
 
 ### Structuring
@@ -100,6 +117,22 @@ describe 'bdd', ->
     checkStars()
 ```
 
+The `And` function serves as an alias for the previously used keyword.
+
+```coffeescript
+
+describe 'simple', ->
+  Given name
+  Given age
+  Then checkName
+  Then checkAge
+
+describe 'with "And"', ->
+  Given name
+  And age
+  Then checkName
+  And checkAge
+```
 
 ### Promises
 
@@ -134,16 +167,18 @@ You can set the label explicitly by passing a string to `Then`.
 Then 'the counter is 5', -> @counter == 5
 ```
 
-Finally, if a given function has a `specLabel` property, it is used to
+Finally, if a given function has a `label` property, it is used to
 contruct the label.
 
 ```coffeescript
 shouldEqual5 = (it)-> it == 5
-shouldEqual5.specLabel = 'should equal 5'
+shouldEqual5.label = 'should equal 5'
 
 # 'then the counter should equal 5'
 Then 'the counter', shouldEqual5
 ```
+
+This makes it perfect for use with [chai-builder][].
 
 
 ### Multiple data
@@ -160,3 +195,4 @@ Then 'name', (n)-> n < 5 && n >= 0
 
 
 [mocha]: http://visionmedia.github.io/mocha/
+[chai-builder]: https://github.com/geigerzaehler/chai-builder

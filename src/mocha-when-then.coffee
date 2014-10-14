@@ -7,11 +7,16 @@
 
   Mocha.interfaces['steps'] = stepsInterface = (suite)->
     suites = []
+    lastKeyword = null
 
     suite.on 'pre-require', (context, file, mocha) ->
 
       context.describe = (title, fn) ->
         suites.push(suite)
+
+        # context.And = ->
+        #   throw Error('"And" keyword must be used after'
+        #               '"Given", "When", or "Then"')
 
         suite = Mocha.Suite.create(suite, title)
         suite.beforeAll -> this.assigns ||= {}
@@ -29,17 +34,23 @@
 
 
       context.Given = (name, executor)->
+        context.And = context.Given
         step = Step(name, executor)
         suite.beforeEach -> step(this.assigns)
 
 
       context.When = (name, executor)->
+        context.And = context.When
         buildStepsTest(suite)
         suite.whens.push(Step(name, executor))
 
 
       context.Then = (name, executor)->
+        context.And = context.Then
         suite.thens.push(TestStep(name, executor))
+
+      # Set by Given, When, Then
+      context.And = undefined
 
 
   # Creates a function that returns a promise

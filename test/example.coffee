@@ -42,6 +42,14 @@ describe 'Given When Then', ->
 
     Then => expect(this.tests).to.have.length(5)
 
+  describe '"And" keyword', ->
+
+    When 'bool', true
+    And  'string', 'hi'
+    Then 'bool', (it)-> expect(it).to.be.true
+    And  'string', (it)-> expect(it).to.equal('hi')
+
+    Then => expect(this.tests).to.have.length(3)
 
   describe 'given constant value', ->
     Given 'number', 2
