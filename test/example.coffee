@@ -26,8 +26,8 @@ describe 'Given When Then', ->
       Then 'number', (it)-> expect(it).to.equal(5)
 
       Given 'test titles', => this.tests.map (t)-> t.title
-      Then  'test titles', ->
-        expect(titles).to.include('then number exepect(it).to.equal(5)')
+      Then  'test titles', (titles)->
+        expect(titles).to.include('then number expect(it).to.equal(5)')
 
 
   describe 'multiple thens and whens', ->
@@ -67,7 +67,7 @@ describe 'Given When Then', ->
     Then -> expect(shouldBeTrue.ran).to.be.true
 
     Given 'test titles', => this.tests.map (t)-> t.title
-    Then  'test titles', ->
+    Then  'test titles', (titles)->
       expect(titles).to.include('then boolean should be true')
 
     Given 'string', 'hey'

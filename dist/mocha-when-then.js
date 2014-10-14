@@ -122,13 +122,12 @@
     };
     factory = function(fn) {
       if (typeof fn === 'function') {
-        (function() {
+        return function() {
           var args;
           args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
           return Promise.resolve(fn.apply(this, args));
-        });
-      }
-      if (typeof fn.test === 'function') {
+        };
+      } else if (typeof fn.test === 'function') {
         return function() {
           var args;
           args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
