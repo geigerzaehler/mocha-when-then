@@ -1,6 +1,8 @@
 Given, When, Then
 =================
 
+[![Build Status](https://travis-ci.org/geigerzaehler/mocha-when-then.svg)](https://travis-ci.org/geigerzaehler/mocha-when-then)
+
 Write **composable and expressive tests** with a promise-based
 Given-When-Then DSL for [mocha][].
 
