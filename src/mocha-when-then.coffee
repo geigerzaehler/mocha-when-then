@@ -136,7 +136,7 @@
   factory = (fn)->
     if typeof fn == 'function'
       (args...)-> Promise.resolve(fn.apply(this, args))
-    if typeof fn.test == 'function'
+    else if typeof fn.test == 'function'
       (args...)-> Promise.resolve(fn.test(args...))
     else
       -> Promise.resolve(fn)
