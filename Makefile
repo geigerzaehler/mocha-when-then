@@ -4,6 +4,12 @@ dist: dist/mocha-when-then.js
 dist/%.js: src/%.coffee
 	coffee --compile --print $< > $@
 
-.PHONY: test
+.PHONY: test prepublish precommit
 test: dist
-	npm test
+	node_modules/.bin/mocha test
+
+prepublish: test
+	git tag "v${npm_package_version}"
+
+precommit: dist
+	git add $<

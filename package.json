@@ -1,12 +1,11 @@
 {
   "name": "mocha-when-then",
-  "version": "0.2.2",
+  "version": "0.2.2-dev",
   "description": "Given, When, Then interface for mocha",
   "main": "dist/mocha-when-then.js",
   "scripts": {
-    "pretest": "make",
-    "test": "node_modules/.bin/mocha test",
-    "prepublish": "npm test"
+    "test": "make test",
+    "prepublish": "make prepublish"
   },
   "repository": {
     "type": "git",
