@@ -4,8 +4,7 @@
   "description": "Given, When, Then interface for mocha",
   "main": "dist/mocha-when-then.js",
   "scripts": {
-    "test": "make test",
-    "prepublish": "make prepublish"
+    "test": "make test"
   },
   "repository": {
     "type": "git",

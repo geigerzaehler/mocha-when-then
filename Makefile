@@ -1,25 +1,34 @@
+VERSION=$(shell node -e 'console.log(require("./package.json")["version"])')
+
+
 .PHONY: dist
 dist: dist/mocha-when-then.js
 
 dist/%.js: src/%.coffee
 	coffee --compile --print $< > $@
 
-.PHONY: test prepublish precommit
+
+
+.PHONY: test publish precommit
 test: dist
 	node_modules/.bin/mocha test
 
+publish: test assert-clean-tree assert-proper-version
+	git tag "v${VERSION}"
+	npm publish
 
-prepublish: test
-	@# Check for uncommited files
+precommit: dist
+	git add $<
+
+
+
+.PHONY: assert-clean-tree
+assert-clean-tree:
 	@(git diff --exit-code --no-patch \
     && git diff --cached --exit-code --no-patch) \
 		|| (echo "There are uncommited files" && false)
 
-	@# Version should not have -dev postfix
-	@if grep --quiet '"version": .*-dev' package.json; \
-	 then echo "Found development version"; false; fi
-
-	git tag "v${npm_package_version}"
-
-precommit: dist
-	git add $<
+.PHONY: assert-proper-version
+assert-proper-version:
+	@if echo "${VERSION}" | grep --quiet '.*-dev'; \
+	 then echo "Found development version" && false; fi
