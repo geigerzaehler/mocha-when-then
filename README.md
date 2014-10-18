@@ -36,6 +36,11 @@ npm install --save-dev mocha-when-then
 mocha --ui mocha-when-then
 ```
 
+For browsers include the file `./dist/browser-bundle.js`. It includes
+the `promise` library and exposes the `mocha-when-then` interface as a
+UMD module. It assumes that `Mocha` is defined as a global variable.
+
+
 ### Assigning variables
 
 By passing a string to the DSL methods you can **assign variables**, or for

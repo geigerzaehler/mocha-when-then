@@ -28,8 +28,12 @@
     "promise": "^6.0.0"
   },
   "devDependencies": {
+    "browserify": "^6.1.0",
     "chai": "^1.9.2",
     "coffee-script": "^1.8.0",
-    "mocha": "^1.21.4"
+    "coffeeify": "^0.7.0",
+    "mocha": "^1.21.4",
+    "mocha-phantomjs": "^3.5.1",
+    "phantomjs": "^1.9.11"
   }
 }
