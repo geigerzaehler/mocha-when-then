@@ -17,6 +17,9 @@
       return suite.on('pre-require', function(context, file, mocha) {
         context.describe = function(title, fn) {
           suites.push(suite);
+          context.And = function() {
+            throw Error('"And" keyword must be used after', '"Given", "When", or "Then"');
+          };
           suite = Mocha.Suite.create(suite, title);
           suite.beforeAll(function() {
             return this.assigns || (this.assigns = {});

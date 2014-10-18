@@ -14,9 +14,9 @@
       context.describe = (title, fn) ->
         suites.push(suite)
 
-        # context.And = ->
-        #   throw Error('"And" keyword must be used after'
-        #               '"Given", "When", or "Then"')
+        context.And = ->
+          throw Error('"And" keyword must be used after'
+                      '"Given", "When", or "Then"')
 
         suite = Mocha.Suite.create(suite, title)
         suite.beforeAll -> this.assigns ||= {}
