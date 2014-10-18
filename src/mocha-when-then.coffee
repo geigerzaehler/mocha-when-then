@@ -5,7 +5,7 @@
     factory global.Promise, global.Mocha
 ) this, (Promise, Mocha)->
 
-  Mocha.interfaces['steps'] = stepsInterface = (suite)->
+  stepsInterface = (suite)->
     suites = []
     lastKeyword = null
 
@@ -51,6 +51,10 @@
 
       # Set by Given, When, Then
       context.And = undefined
+
+
+  Mocha.interfaces['mocha-when-then'] = stepsInterface
+  Mocha.interfaces['when-then'] = stepsInterface
 
 
   # Creates a function that returns a promise
