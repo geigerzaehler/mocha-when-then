@@ -8,9 +8,8 @@
   Mocha = require('mocha');
 
   module.exports = Mocha.interfaces['mocha-when-then'] = Mocha.interfaces['when-then'] = function(suite) {
-    var lastKeyword, suites;
+    var suites;
     suites = [];
-    lastKeyword = null;
     return suite.on('pre-require', function(context, file, mocha) {
       context.describe = function(title, fn) {
         suites.push(suite);

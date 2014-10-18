@@ -6,7 +6,6 @@ module.exports \
 = Mocha.interfaces['when-then'] \
 = (suite)->
   suites = []
-  lastKeyword = null
 
   suite.on 'pre-require', (context, file, mocha) ->
 
