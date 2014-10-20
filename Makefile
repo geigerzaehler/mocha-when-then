@@ -4,12 +4,12 @@ VERSION=$(shell node -e 'console.log(require("./package.json")["version"])')
 .PHONY: dist
 dist: dist/mocha-when-then.js dist/browser-bundle.js
 
-dist/browser-bundle.js:
+dist/browser-bundle.js: src/browser.coffee src/global-mocha.js
 	node_modules/.bin/browserify \
 		--transform coffeeify \
+		--extension .coffee \
 		--require ./src/global-mocha:mocha \
-		--require es5-shim \
-		src/mocha-when-then.coffee \
+		./src/browser \
 		--standalone mocha-when-then \
 		--outfile $@
 
