@@ -37,7 +37,7 @@ mocha --ui mocha-when-then
 ```
 
 For browsers include the file `./dist/browser-bundle.js`. It includes
-the `promise` library and exposes the `mocha-when-then` interface as a
+the [promise][] library, the [es5-shim][], and exposes the `mocha-when-then` interface as a
 UMD module. It assumes that `Mocha` is defined as a global variable.
 
 
@@ -203,3 +203,5 @@ Then 'name', (n)-> n < 5 && n >= 0
 
 [mocha]: http://visionmedia.github.io/mocha/
 [chai-builder]: https://github.com/geigerzaehler/chai-builder
+[es5-shim]: https://www.npmjs.org/package/es5-shim
+[promise]: https://www.npmjs.org/package/promise

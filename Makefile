@@ -7,8 +7,8 @@ dist: dist/mocha-when-then.js dist/browser-bundle.js
 dist/browser-bundle.js:
 	node_modules/.bin/browserify \
 		--transform coffeeify \
-		--hasExports=false \
 		--require ./src/global-mocha:mocha \
+		--require es5-shim \
 		src/mocha-when-then.coffee \
 		--standalone mocha-when-then \
 		--outfile $@

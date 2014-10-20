@@ -32,6 +32,7 @@
     "chai": "^1.9.2",
     "coffee-script": "^1.8.0",
     "coffeeify": "^0.7.0",
+    "es5-shim": "^4.0.3",
     "mocha": "^1.21.4",
     "mocha-phantomjs": "^3.5.1",
     "phantomjs": "^1.9.11"
