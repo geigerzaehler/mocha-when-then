@@ -98,7 +98,6 @@ Then   -> @more > @zero
 ```
 
 You can bypass this by using the `value` modifier.
-Given 'zero', -> makePromise(0)
 
 ```coffeescript
 Given.value 'promise', makePromise(0)
@@ -111,10 +110,8 @@ to the step. If an assignment is a promise, the `Then` step will be run
 with the resolved value.
 
 ```coffeescript
-When  ->
-  @value = makePromise(0)
-  return
-Then 'value', (it)-> it == 0
+When.value 'zero', makePromise(0)
+Then 'zero', (it)-> it == 0
 ```
 
 
