@@ -61,6 +61,9 @@ describe 'Given When Then', ->
     When  'string', -> Promise.resolve(@string + ' ho')
     Then  'string', (it)-> expect(it).to.equal('hey ho')
 
+    When ->
+      @value = Promise.resolve('hey')
+    Then  'value', (it)-> expect(it).to.equal('hey')
 
   describe 'tester', ->
 

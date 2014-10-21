@@ -85,7 +85,9 @@ Step = (name, executor)->
 TestStep = (label, fn)->
   {executor, name} = stepSpec(label, fn)
   run = (assigns)->
-    executor.call(assigns, assigns[name] if name)
+    Promise.resolve(assigns[name] if name)
+    .then (value)->
+      executor.call(assigns, value)
     .then (result)=>
       if result == false
         throw Error "Then statement returned 'false'"

@@ -2017,7 +2017,9 @@ TestStep = function(label, fn) {
   var executor, name, run, _ref;
   _ref = stepSpec(label, fn), executor = _ref.executor, name = _ref.name;
   run = function(assigns) {
-    return executor.call(assigns, name ? assigns[name] : void 0).then((function(_this) {
+    return Promise.resolve(name ? assigns[name] : void 0).then(function(value) {
+      return executor.call(assigns, value);
+    }).then((function(_this) {
       return function(result) {
         if (result === false) {
           throw Error("Then statement returned 'false'");
