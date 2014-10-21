@@ -3,6 +3,7 @@ Given, When, Then
 
 [![Build Status](https://travis-ci.org/geigerzaehler/mocha-when-then.svg)](https://travis-ci.org/geigerzaehler/mocha-when-then)
 
+
 Write **composable and expressive tests** with a promise-based
 Given-When-Then DSL for [mocha][].
 
@@ -40,8 +41,16 @@ For browsers include the file `./dist/browser-bundle.js`. It includes
 the [promise][] library, the [es5-shim][], and exposes the `mocha-when-then` interface as a
 UMD module. It assumes that `Mocha` is defined as a global variable.
 
+#### Table of contents
 
-### Assigning variables
+1. [Assigning Variables](#assigning-variables)
+2. [Then Assertions](#then-assertions)
+3. [Using Promises](#using-promises)
+4. [Structuring Your Tests](#structuring-your-tests)
+5. [Test Labels](#test-labels)
+
+
+### Assigning Variables
 
 By passing a string to the DSL methods you can **assign variables**, or for
 `Then`, pass variables to step.
@@ -60,7 +69,7 @@ same holds for 'an' and 'the'.
 You can also pass constant values to the steps instead of functions.
 
 
-### `Then` assertions
+### `Then` Assertions
 
 In addition to executing a step, `Then` also serves as a **simple
 assertion** replacement. It will throw an error if the return value of
@@ -77,7 +86,7 @@ Then 'number', (it)-> it == 4
 ```
 
 
-### Promises
+### Using Promises
 
 All functions passed to the DSL may return promises. The next step is
 only executed when the promise is fullfilled.
@@ -109,7 +118,7 @@ Then 'value', (it)-> it == 0
 ```
 
 
-### Structuring
+### Structuring Your Tests
 
 We now explain in more detail how the step DSL maps to the default BDD
 DSL.
@@ -173,7 +182,7 @@ describe 'with "And"', ->
   And checkAge
 ```
 
-### Test labels
+### Test Labels
 
 Since each `Then` creates a test case it has to provide a label for the
 test.
