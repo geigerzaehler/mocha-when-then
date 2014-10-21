@@ -64,11 +64,11 @@ describe 'Given When Then', ->
 
   describe 'tester', ->
 
-    shouldBeTrue =
-      test: (it)->
+    shouldBeTrue = ->
+    shouldBeTrue.test = (it)->
         expect(it).to.be.true
         this.ran = true
-      specLabel: 'should be true'
+    shouldBeTrue.label = 'should be true'
 
     Given 'boolean', true
     Then  'boolean', shouldBeTrue

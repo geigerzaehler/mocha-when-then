@@ -131,17 +131,17 @@
   };
 
   factory = function(fn) {
-    if (typeof fn === 'function') {
-      return function() {
-        var args;
-        args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-        return Promise.resolve(fn.apply(this, args));
-      };
-    } else if (typeof fn.test === 'function') {
+    if (typeof fn.test === 'function') {
       return function() {
         var args;
         args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
         return Promise.resolve(fn.test.apply(fn, args));
+      };
+    } else if (typeof fn === 'function') {
+      return function() {
+        var args;
+        args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+        return Promise.resolve(fn.apply(this, args));
       };
     } else {
       return function() {
@@ -156,8 +156,8 @@
     if (name) {
       label.push(name);
     }
-    if (fn.specLabel != null) {
-      label.push(fn.specLabel);
+    if (fn.label != null) {
+      label.push(fn.label);
     } else if (typeof fn === 'function') {
       label.push(lastReturnExpression(fn));
     } else {

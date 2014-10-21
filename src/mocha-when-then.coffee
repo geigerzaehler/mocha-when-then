@@ -143,10 +143,10 @@ stepSpec = (label, executor)->
 # If `fn` has a `test` method, it is called when the factory is
 # executed.
 factory = (fn)->
-  if typeof fn == 'function'
-    (args...)-> Promise.resolve(fn.apply(this, args))
-  else if typeof fn.test == 'function'
+  if typeof fn.test == 'function'
     (args...)-> Promise.resolve(fn.test(args...))
+  else if typeof fn == 'function'
+    (args...)-> Promise.resolve(fn.apply(this, args))
   else
     -> Promise.resolve(fn)
 
@@ -157,8 +157,8 @@ specLabel = (fn, name)->
   if name
     label.push name
 
-  if fn.specLabel?
-    label.push fn.specLabel
+  if fn.label?
+    label.push fn.label
   else if typeof fn == 'function'
     label.push lastReturnExpression(fn)
   else
