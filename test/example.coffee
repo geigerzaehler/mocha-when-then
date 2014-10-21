@@ -61,9 +61,12 @@ describe 'Given When Then', ->
     When  'string', -> Promise.resolve(@string + ' ho')
     Then  'string', (it)-> expect(it).to.equal('hey ho')
 
-    When ->
-      @value = Promise.resolve('hey')
-    Then  'value', (it)-> expect(it).to.equal('hey')
+
+    describe 'Then.value', ->
+      Given.value 'string', Promise.resolve('hey')
+      When.value 'rejected', Promise.reject(new Error('timeout'))
+      When.value 'string', -> @string.then (s)-> s + ' ho'
+      Then 'string', (it)-> expect(it).to.equal('hey ho')
 
   describe 'tester', ->
 

@@ -77,6 +77,38 @@ Then 'number', (it)-> it == 4
 ```
 
 
+### Promises
+
+All functions passed to the DSL may return promises. The next step is
+only executed when the promise is fullfilled.
+
+```coffeescript
+Given 'zero', -> makePromise(0)
+When  'more', makePromise(1)
+Then   -> @more > @zero
+```
+
+You can bypass this by using the `value` modifier.
+Given 'zero', -> makePromise(0)
+
+```coffeescript
+Given.value 'promise', makePromise(0)
+When.value  'promise', -> @promise.then(makePromise(1))
+Then -> expect(@promise).to.be.a.promise.and.resolve.to(1)
+```
+
+Recall that the `Then` label specifies which assginment will be passed
+to the step. If an assignment is a promise, the `Then` step will be run
+with the resolved value.
+
+```coffeescript
+When  ->
+  @value = makePromise(0)
+  return
+Then 'value', (it)-> it == 0
+```
+
+
 ### Structuring
 
 We now explain in more detail how the step DSL maps to the default BDD
@@ -139,28 +171,6 @@ describe 'with "And"', ->
   And age
   Then checkName
   And checkAge
-```
-
-### Promises
-
-All functions passed to the DSL may return promises. The next step is
-only executed when the promise is fullfilled.
-
-```coffeescript
-Given 'zero', -> makePromise(0)
-When  'more', makePromise(1)
-Then   -> @more > @zero
-```
-
-Recall that the `Then` label specifies which assginment will be passed
-to the step. If an assignment is a promise, the `Then` step will be run
-with the resolved value.
-
-```coffeescript
-When  ->
-  @value = makePromise(0)
-  return
-Then 'value', (it)-> it == 0
 ```
 
 ### Test labels

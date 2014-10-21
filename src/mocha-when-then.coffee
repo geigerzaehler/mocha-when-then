@@ -36,11 +36,21 @@ module.exports \
       step = Step(name, executor)
       suite.beforeEach -> step(this.assigns)
 
+    context.Given.value = (name, executor)->
+      context.And = context.Given
+      step = ValueStep(name, executor)
+      suite.beforeEach -> step(this.assigns)
+
 
     context.When = (name, executor)->
       context.And = context.When
       buildStepsTest(suite)
       suite.whens.push(Step(name, executor))
+
+    context.When.value = (name, executor)->
+      context.And = context.When
+      buildStepsTest(suite)
+      suite.whens.push(ValueStep(name, executor))
 
 
     context.Then = (name, executor)->
@@ -71,6 +81,14 @@ Step = (name, executor)->
   (assigns)->
     executor.call(assigns)
     .then (val)=> assigns[name] = val if name
+
+
+ValueStep = (name, executor)->
+  {executor, name} = stepSpec(name, executor)
+  (assigns)->
+    value = executor.call(assigns)
+    assigns[name] = value if name
+    Promise.resolve()
 
 
 # Similar to `Step`.

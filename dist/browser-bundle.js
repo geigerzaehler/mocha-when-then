@@ -1945,7 +1945,7 @@ module.exports = require('./mocha-when-then');
 
 
 },{"./mocha-when-then":10,"es5-shim":2}],10:[function(require,module,exports){
-var Mocha, Promise, Step, TestStep, buildStepsTest, factory, joinSteps, lastReturnExpression, specLabel, stepSpec,
+var Mocha, Promise, Step, TestStep, ValueStep, buildStepsTest, factory, joinSteps, lastReturnExpression, specLabel, stepSpec,
   __slice = [].slice;
 
 Promise = require('promise');
@@ -1986,10 +1986,23 @@ module.exports = Mocha.interfaces['mocha-when-then'] = Mocha.interfaces['when-th
         return step(this.assigns);
       });
     };
+    context.Given.value = function(name, executor) {
+      var step;
+      context.And = context.Given;
+      step = ValueStep(name, executor);
+      return suite.beforeEach(function() {
+        return step(this.assigns);
+      });
+    };
     context.When = function(name, executor) {
       context.And = context.When;
       buildStepsTest(suite);
       return suite.whens.push(Step(name, executor));
+    };
+    context.When.value = function(name, executor) {
+      context.And = context.When;
+      buildStepsTest(suite);
+      return suite.whens.push(ValueStep(name, executor));
     };
     context.Then = function(name, executor) {
       context.And = context.Then;
@@ -2010,6 +2023,19 @@ Step = function(name, executor) {
         }
       };
     })(this));
+  };
+};
+
+ValueStep = function(name, executor) {
+  var _ref;
+  _ref = stepSpec(name, executor), executor = _ref.executor, name = _ref.name;
+  return function(assigns) {
+    var value;
+    value = executor.call(assigns);
+    if (name) {
+      assigns[name] = value;
+    }
+    return Promise.resolve();
   };
 };
 
