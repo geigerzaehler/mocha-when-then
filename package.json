@@ -1,6 +1,6 @@
 {
   "name": "mocha-when-then",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Given, When, Then interface for mocha",
   "main": "dist/mocha-when-then.js",
   "scripts": {
