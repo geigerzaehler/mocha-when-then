@@ -1,7 +1,7 @@
 {expect} = require('chai')
 Promise = require('promise')
 
-describe 'Given When Then', ->
+describe.only 'Given When Then', ->
 
   Given -> @number = 5
   When  -> @number += 2
@@ -87,3 +87,6 @@ describe 'Given When Then', ->
     Given 'string', 'hey'
     Then  'string', /^h/
 
+
+describe 'do not run', ->
+  Then false

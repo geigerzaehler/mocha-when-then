@@ -1975,8 +1975,10 @@ module.exports = Mocha.interfaces['mocha-when-then'] = Mocha.interfaces['when-th
       return suite = suites.pop();
     };
     context.describe.only = function(title, fn) {
-      context.describe(title, fn);
-      return mocha.grep(suite.fullTitle());
+      return context.describe(title, function() {
+        mocha.grep(this.fullTitle());
+        return fn.call(this);
+      });
     };
     context.Given = function(name, executor) {
       var step;

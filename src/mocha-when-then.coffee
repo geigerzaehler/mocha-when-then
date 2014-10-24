@@ -27,8 +27,9 @@ module.exports \
 
 
     context.describe.only = (title, fn)->
-      context.describe(title, fn)
-      mocha.grep suite.fullTitle()
+      context.describe title, ->
+        mocha.grep @fullTitle()
+        fn.call(this)
 
 
     context.Given = (name, executor)->
