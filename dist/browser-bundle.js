@@ -1945,7 +1945,7 @@ module.exports = require('./mocha-when-then');
 
 
 },{"./mocha-when-then":10,"es5-shim":2}],10:[function(require,module,exports){
-var Mocha, Promise, Step, TestStep, ValueStep, buildStepsTest, factory, joinSteps, lastReturnExpression, specLabel, stepSpec,
+var Mocha, Promise, Step, TestStep, ValueStep, buildStepsTest, camelCase, factory, joinSteps, lastReturnExpression, specLabel, stepSpec,
   __slice = [].slice;
 
 Promise = require('promise');
@@ -2097,6 +2097,7 @@ stepSpec = function(label, executor) {
   }
   if (label) {
     name = label.replace(/^(an?|the)\s+|(is|are)$/, '') || label;
+    name = camelCase(name);
   }
   executor = factory(executor);
   return {
@@ -2148,6 +2149,12 @@ lastReturnExpression = function(fn) {
   returnExpr = /\s*return\s+([^;]+)\s*;\s*$/;
   expr = fn.toString().replace(fnStart, '').replace(blockEnd, '').match(returnExpr);
   return expr && expr[1];
+};
+
+camelCase = function(string) {
+  return string.replace(/[- ]([a-zA-Z])/g, function(_, start) {
+    return start.toUpperCase();
+  });
 };
 
 

@@ -155,6 +155,7 @@ stepSpec = (label, executor)->
     label = null
   if label
     name = label.replace(/^(an?|the)\s+|(is|are)$/, '') || label
+    name = camelCase(name)
   executor = factory(executor)
   return {name, executor}
 
@@ -199,3 +200,8 @@ lastReturnExpression = (fn)->
     .replace(blockEnd, '')
     .match(returnExpr)
   return expr and expr[1]
+
+
+camelCase = (string)->
+  string.replace /[- ]([a-zA-Z])/g, (_, start)->
+    start.toUpperCase()

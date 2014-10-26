@@ -29,6 +29,10 @@ describe.only 'Given When Then', ->
       Then  'test titles', (titles)->
         expect(titles).to.include('then number expect(it).to.equal(5)')
 
+    describe.only 'camel case', ->
+      Given 'my new-number', 5
+      Then -> @myNewNumber == 5
+
 
   describe 'multiple thens and whens', ->
 
