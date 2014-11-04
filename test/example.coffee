@@ -12,26 +12,42 @@ describe.only 'Given When Then', ->
     Then -> expect(@number).to.equal(5)
 
 
-  describe 'assignment names', ->
+  describe 'assignments', ->
     Given 'string', -> 'hello'
     When  'string', -> @string += ' world'
     Then  'string', (it)-> expect(it).to.equal('hello world')
+
+    describe 'function arguments', ->
+      When 'appended', (string)-> string += ' world'
+      Then (appended, string)->
+        expect(appended).to.equal('hello world')
+        expect(string).to.equal('hello')
+
+    describe 'later', ->
+      Given 'counter', 0
+      Given.later 'inc', -> @counter + 1
+
+      Then (inc)-> expect(inc).to.equal(1)
+
+      When -> @counter++
+      Then (inc)-> expect(inc).to.equal(2)
 
     describe 'verbose', ->
       Given 'the string is', -> 'hello'
       Then  'string', (it)-> expect(it).to.equal('hello')
 
-    describe 'label', ->
-      Given 'number', 5
-      Then 'number', (it)-> expect(it).to.equal(5)
-
-      Given 'test titles', => this.tests.map (t)-> t.title
-      Then  'test titles', (titles)->
-        expect(titles).to.include('then number expect(it).to.equal(5)')
-
-    describe.only 'camel case', ->
+    describe 'camel case', ->
       Given 'my new-number', 5
       Then -> @myNewNumber == 5
+
+
+  describe 'test label', ->
+    Given 'number', 5
+    Then 'number', (it)-> expect(it).to.equal(5)
+
+    Given 'test titles', => this.tests.map (t)-> t.title
+    Then  'test titles', (titles)->
+      expect(titles).to.include('then number expect(it).to.equal(5)')
 
 
   describe 'multiple thens and whens', ->
@@ -46,6 +62,7 @@ describe.only 'Given When Then', ->
 
     Then => expect(this.tests).to.have.length(5)
 
+
   describe '"And" keyword', ->
 
     When 'bool', true
@@ -54,6 +71,7 @@ describe.only 'Given When Then', ->
     And  'string', (it)-> expect(it).to.equal('hi')
 
     Then => expect(this.tests).to.have.length(3)
+
 
   describe 'given constant value', ->
     Given 'number', 2
@@ -71,6 +89,7 @@ describe.only 'Given When Then', ->
       When.value 'rejected', Promise.reject(new Error('timeout'))
       When.value 'string', -> @string.then (s)-> s + ' ho'
       Then 'string', (it)-> expect(it).to.equal('hey ho')
+
 
   describe 'tester', ->
 

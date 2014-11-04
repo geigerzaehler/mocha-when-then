@@ -1945,7 +1945,7 @@ module.exports = require('./mocha-when-then');
 
 
 },{"./mocha-when-then":10,"es5-shim":2}],10:[function(require,module,exports){
-var Mocha, Promise, Step, TestStep, ValueStep, buildStepsTest, camelCase, factory, joinSteps, lastReturnExpression, specLabel, stepSpec,
+var GetterStep, Mocha, Promise, Step, TestStep, ValueStep, buildStepsTest, callWithAssigns, camelCase, factory, functionArguments, joinSteps, lastReturnExpression, specLabel, stepSpec,
   __slice = [].slice;
 
 Promise = require('promise');
@@ -1963,10 +1963,12 @@ module.exports = Mocha.interfaces['mocha-when-then'] = Mocha.interfaces['when-th
       };
       suite = Mocha.Suite.create(suite, title);
       suite.beforeAll(function() {
-        return this.assigns || (this.assigns = {});
+        this.assigns || (this.assigns = {});
+        return this.getters || (this.getters = {});
       });
       suite.afterEach(function() {
-        return this.assigns = {};
+        this.assigns = {};
+        return this.getters = {};
       });
       suite.whens = [];
       suite.thens = [];
@@ -1996,6 +1998,14 @@ module.exports = Mocha.interfaces['mocha-when-then'] = Mocha.interfaces['when-th
         return step(this.assigns);
       });
     };
+    context.Given.later = function(name, executor) {
+      var step;
+      context.And = context.Given;
+      step = GetterStep(name, executor);
+      return suite.beforeEach(function() {
+        return step(this.assigns, this.getters);
+      });
+    };
     context.When = function(name, executor) {
       context.And = context.When;
       buildStepsTest(suite);
@@ -2018,7 +2028,7 @@ Step = function(name, executor) {
   var _ref;
   _ref = stepSpec(name, executor), executor = _ref.executor, name = _ref.name;
   return function(assigns) {
-    return executor.call(assigns).then((function(_this) {
+    return callWithAssigns(assigns, executor).then((function(_this) {
       return function(val) {
         if (name) {
           return assigns[name] = val;
@@ -2033,7 +2043,7 @@ ValueStep = function(name, executor) {
   _ref = stepSpec(name, executor), executor = _ref.executor, name = _ref.name;
   return function(assigns) {
     var value;
-    value = executor.call(assigns);
+    value = callWithAssigns(assigns, executor);
     if (name) {
       assigns[name] = value;
     }
@@ -2041,12 +2051,43 @@ ValueStep = function(name, executor) {
   };
 };
 
+GetterStep = function(name, executor) {
+  var _ref;
+  _ref = stepSpec(name, executor), executor = _ref.executor, name = _ref.name;
+  if (name == null) {
+    throw Error('Given.later must be called with a label');
+  }
+  return function(assigns, getters) {
+    console.log('define getter', name);
+    getters[name] = function() {
+      console.log('resolve getter', name);
+      return callWithAssigns(assigns, executor);
+    };
+    return Promise.resolve();
+  };
+};
+
 TestStep = function(label, fn) {
   var executor, name, run, _ref;
   _ref = stepSpec(label, fn), executor = _ref.executor, name = _ref.name;
-  run = function(assigns) {
-    return Promise.resolve(name ? assigns[name] : void 0).then(function(value) {
-      return executor.call(assigns, value);
+  run = function(assigns, getters) {
+    var n, names, values;
+    if (name) {
+      names = [name];
+    } else {
+      names = executor.argNames || [];
+    }
+    values = (function() {
+      var _i, _len, _results;
+      _results = [];
+      for (_i = 0, _len = names.length; _i < _len; _i++) {
+        n = names[_i];
+        _results.push(assigns[n] || (typeof getters[n] === "function" ? getters[n]() : void 0));
+      }
+      return _results;
+    })();
+    return Promise.all(values).then(function(values) {
+      return executor.apply(assigns, values);
     }).then((function(_this) {
       return function(result) {
         if (result === false) {
@@ -2060,17 +2101,19 @@ TestStep = function(label, fn) {
 };
 
 joinSteps = function(steps) {
-  var assigns, next;
+  var assigns, getters, next;
   steps = steps.slice();
   assigns = null;
+  getters = null;
   next = function() {
     var step;
     if (step = steps.shift()) {
-      return step(assigns).then(next);
+      return step(assigns, getters).then(next);
     }
   };
   return function() {
     assigns = this.assigns;
+    getters = this.getters;
     return next();
   };
 };
@@ -2107,23 +2150,28 @@ stepSpec = function(label, executor) {
 };
 
 factory = function(fn) {
+  var argNames, f;
   if (typeof fn.test === 'function') {
-    return function() {
+    argNames = functionArguments(fn.test);
+    f = function() {
       var args;
       args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       return Promise.resolve(fn.test.apply(fn, args));
     };
   } else if (typeof fn === 'function') {
-    return function() {
+    argNames = functionArguments(fn);
+    f = function() {
       var args;
       args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       return Promise.resolve(fn.apply(this, args));
     };
   } else {
-    return function() {
+    f = function() {
       return Promise.resolve(fn);
     };
   }
+  f.argNames = argNames;
+  return f;
 };
 
 specLabel = function(fn, name) {
@@ -2149,6 +2197,26 @@ lastReturnExpression = function(fn) {
   returnExpr = /\s*return\s+([^;]+)\s*;\s*$/;
   expr = fn.toString().replace(fnStart, '').replace(blockEnd, '').match(returnExpr);
   return expr && expr[1];
+};
+
+functionArguments = function(fn) {
+  var argMatch;
+  argMatch = fn.toString().match(/function\s*\w*\s*\((.*?)\)/);
+  if (argMatch) {
+    return argMatch[1].split(/\s*,\s*/);
+  }
+};
+
+callWithAssigns = function(assigns, fn) {
+  var argNames, args, x, _i, _len;
+  args = [];
+  if (argNames = fn.argNames) {
+    for (_i = 0, _len = argNames.length; _i < _len; _i++) {
+      x = argNames[_i];
+      args.push(assigns[x]);
+    }
+  }
+  return fn.apply(assigns, args);
 };
 
 camelCase = function(string) {

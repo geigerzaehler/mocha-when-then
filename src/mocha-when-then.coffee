@@ -17,8 +17,12 @@ module.exports \
                     '"Given", "When", or "Then"')
 
       suite = Mocha.Suite.create(suite, title)
-      suite.beforeAll -> this.assigns ||= {}
-      suite.afterEach -> this.assigns = {}
+      suite.beforeAll ->
+        this.assigns ||= {}
+        this.getters ||= {}
+      suite.afterEach ->
+        this.assigns = {}
+        this.getters = {}
       suite.whens = []
       suite.thens = []
       fn.call(suite)
@@ -42,6 +46,10 @@ module.exports \
       step = ValueStep(name, executor)
       suite.beforeEach -> step(this.assigns)
 
+    context.Given.later = (name, executor)->
+      context.And = context.Given
+      step = GetterStep(name, executor)
+      suite.beforeEach -> step(this.assigns, this.getters)
 
     context.When = (name, executor)->
       context.And = context.When
@@ -52,7 +60,6 @@ module.exports \
       context.And = context.When
       buildStepsTest(suite)
       suite.whens.push(ValueStep(name, executor))
-
 
     context.Then = (name, executor)->
       context.And = context.Then
@@ -80,15 +87,27 @@ module.exports \
 Step = (name, executor)->
   {executor, name} = stepSpec(name, executor)
   (assigns)->
-    executor.call(assigns)
+    callWithAssigns(assigns, executor)
     .then (val)=> assigns[name] = val if name
 
 
 ValueStep = (name, executor)->
   {executor, name} = stepSpec(name, executor)
   (assigns)->
-    value = executor.call(assigns)
+    value = callWithAssigns(assigns, executor)
     assigns[name] = value if name
+    Promise.resolve()
+
+
+GetterStep = (name, executor)->
+  {executor, name} = stepSpec(name, executor)
+  if not name?
+    throw Error('Given.later must be called with a label')
+  (assigns, getters)->
+    console.log 'define getter', name
+    getters[name] = ->
+      console.log 'resolve getter', name
+      callWithAssigns(assigns, executor)
     Promise.resolve()
 
 
@@ -103,10 +122,18 @@ ValueStep = (name, executor)->
 #
 TestStep = (label, fn)->
   {executor, name} = stepSpec(label, fn)
-  run = (assigns)->
-    Promise.resolve(assigns[name] if name)
-    .then (value)->
-      executor.call(assigns, value)
+  run = (assigns, getters)->
+    if name
+      names = [name]
+    else
+      names = executor.argNames || []
+
+    values = for n in names
+      assigns[n] || getters[n]?()
+
+    Promise.all(values)
+    .then (values)->
+      executor.apply(assigns, values)
     .then (result)=>
       if result == false
         throw Error "Then statement returned 'false'"
@@ -124,14 +151,24 @@ TestStep = (label, fn)->
 joinSteps = (steps)->
   steps = steps.slice()
   assigns = null
+  getters = null
   next = ->
     if step = steps.shift()
-      step(assigns).then(next)
+      step(assigns, getters).then(next)
   ->
     assigns = this.assigns
+    getters = this.getters
     next()
 
+
 # Add a test from the `When` and `Then` steps defined on the suite.
+#
+# Creates a test for each 'Then' step that has been defined. Each tests
+# included all the preceding 'When' steps. Finally, it removes the
+# 'Then' and 'When' steps.
+#
+# If there are no 'Then' steps, this is a no-op.
+#
 buildStepsTest = (suite)->
   {whens, thens} = suite
   for t in thens
@@ -149,6 +186,7 @@ buildStepsTest = (suite)->
 # @param {string} [label]
 # @param {Function|Object} executor
 #
+# Wraps the `executor` in a factory and normalized the label name.
 stepSpec = (label, executor)->
   if not executor?
     executor = label
@@ -159,18 +197,27 @@ stepSpec = (label, executor)->
   executor = factory(executor)
   return {name, executor}
 
+
 # Takes a function or a value and returns a function that returns a
 # promise.
 #
 # If `fn` has a `test` method, it is called when the factory is
 # executed.
+#
+# The returned factory has an `argNames` property, which is a list of
+# argument names of the original function.
 factory = (fn)->
   if typeof fn.test == 'function'
-    (args...)-> Promise.resolve(fn.test(args...))
+    argNames = functionArguments fn.test
+    f = (args...)-> Promise.resolve(fn.test(args...))
   else if typeof fn == 'function'
-    (args...)-> Promise.resolve(fn.apply(this, args))
+    argNames = functionArguments fn
+    f = (args...)-> Promise.resolve(fn.apply(this, args))
   else
-    -> Promise.resolve(fn)
+    f = -> Promise.resolve(fn)
+  f.argNames = argNames
+  f
+
 
 # Create an assertion label for a function or value and a variable
 # name.
@@ -188,6 +235,7 @@ specLabel = (fn, name)->
 
   return label.join(' ')
 
+
 # Return the string of the expression passed to the last return
 # statement in the function.
 lastReturnExpression = (fn)->
@@ -200,6 +248,21 @@ lastReturnExpression = (fn)->
     .replace(blockEnd, '')
     .match(returnExpr)
   return expr and expr[1]
+
+
+# Return the list of argument names of the function
+functionArguments = (fn)->
+  argMatch = fn.toString().match (/function\s*\w*\s*\((.*?)\)/)
+  if argMatch
+    argMatch[1].split(/\s*,\s*/)
+
+
+callWithAssigns = (assigns, fn)->
+  args = []
+  if argNames = fn.argNames
+    for x in argNames
+      args.push(assigns[x])
+  fn.apply(assigns, args)
 
 
 camelCase = (string)->
