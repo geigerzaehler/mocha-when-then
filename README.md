@@ -227,7 +227,7 @@ Then 'name', (n)-> n < 5 && n >= 0
 ```
 
 
-[mocha]: http://visionmedia.github.io/mocha/
+[mocha]: http://mochajs.org/
 [chai-builder]: https://github.com/geigerzaehler/chai-builder
 [es5-shim]: https://www.npmjs.org/package/es5-shim
 [promise]: https://www.npmjs.org/package/promise
